@@ -11,24 +11,23 @@ import MediaPlayer
 import AVFoundation
 
 class ViewController: UIViewController {
+    
+    var player : Player?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        loadSong(songURL: "**********")
+        //init
+        player = Player()
+        
+        let url = "https://www.osiris-shop.com/music_app/Mandume.mp3"
+        
+        player?.loadSong(songURL: url)
         
     }
-    
-    var player : AVPlayer?
        
-    func loadSong(songURL: String) {
 
-        guard let url = URL.init(string: songURL) else { return }
-        let playerItem = AVPlayerItem.init(url: url)
-        player = AVPlayer.init(playerItem: playerItem)
-        player?.play()
-    }
     
 }
 
