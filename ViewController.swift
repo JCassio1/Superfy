@@ -25,13 +25,12 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-                    
-        let imageName = "orange"
-        let getImage = UIImage(named: imageName)
-        coverImage.image = getImage
+               
+        setAudioSession()
+        UIApplication.shared.beginReceivingRemoteControlEvents()
+        becomeFirstResponder()
         
-        //Make Cover Image round corners
-        addRoundCorners(dimensions: 8.0)
+        configureUI()
 
         //init
         player = Player()
@@ -41,7 +40,32 @@ class ViewController: UIViewController {
         
         if player!.theMediaPlayer.rate > 0 { playPauseButon.setImage(pauseIcon, for: .normal) }
     }
-       
+    
+    override var canBecomeFirstResponder: Bool {
+        get {
+            return true
+        }
+    }
+    
+    func setAudioSession(){
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback)
+        }
+            
+        catch {
+            print(error)
+        }
+    }
+    
+    func configureUI() {
+        let imageName = "orange"
+        let getImage = UIImage(named: imageName)
+        coverImage.image = getImage
+        
+        //Make Cover Image round corners
+        addRoundCorners(dimensions: 8.0)
+    }
+    
     func addRoundCorners(dimensions: Float) {
         coverImage.layer.cornerRadius = CGFloat(dimensions)
     }
@@ -63,6 +87,22 @@ class ViewController: UIViewController {
     
     func changePlayButton(playing: Bool) {
         playing ? playPauseButon.setImage(playIcon, for: .normal) : playPauseButon.setImage(pauseIcon, for: .normal)
+    }
+    
+    override func remoteControlReceived(with event: UIEvent?) {
+        
+        if event!.type == UIEvent.EventType.remoteControl {
+    
+            if event!.subtype == UIEvent.EventSubtype.remoteControlPause {
+                print("Pause...")
+                player?.pauseSong()
+            }
+            
+            else if event!.subtype == UIEvent.EventSubtype.remoteControlPlay {
+                print("Play")
+                player?.playSong()
+            }
+        }
     }
     
 }
