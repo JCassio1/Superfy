@@ -95,22 +95,6 @@ class ViewController: UIViewController {
         playing ? playPauseButon.setImage(playIcon, for: .normal) : playPauseButon.setImage(pauseIcon, for: .normal)
     }
     
-    override func remoteControlReceived(with event: UIEvent?) {
-        
-        if event!.type == UIEvent.EventType.remoteControl {
-    
-            if event!.subtype == UIEvent.EventSubtype.remoteControlPause {
-                print("Pause...")
-                player?.pauseSong()
-            }
-            
-            else if event!.subtype == UIEvent.EventSubtype.remoteControlPlay {
-                print("Play")
-                player?.playSong()
-            }
-        }
-    }
-    
     // If audio is interrupted by phone call or other app
     @objc func handleInterruption(notification: NSNotification) {
         player?.pauseSong()
@@ -131,11 +115,13 @@ class ViewController: UIViewController {
                 print("began")
                 // player is paused and session is inactive. need to update UI)
                 player?.pauseSong()
+                changePlayButton(playing: true)
                 print("audio paused")
 
             default:
                 print("ended")
                 player?.playSong()
+                changePlayButton(playing: false)
                 print("audio resumed")
             }
         }
@@ -164,6 +150,23 @@ class ViewController: UIViewController {
             }
 
         default: ()
+        }
+    }
+    
+    
+    override func remoteControlReceived(with event: UIEvent?) {
+        
+        if event!.type == UIEvent.EventType.remoteControl {
+    
+            if event!.subtype == UIEvent.EventSubtype.remoteControlPause {
+                print("Pause... remote")
+                player?.pauseSong()
+            }
+            
+            else if event!.subtype == UIEvent.EventSubtype.remoteControlPlay {
+                print("Play... remote")
+                player?.playSong()
+            }
         }
     }
     

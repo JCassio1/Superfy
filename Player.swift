@@ -23,6 +23,9 @@ class Player
         let playerItem = AVPlayerItem.init(url: url)
         theMediaPlayer = AVPlayer.init(playerItem: playerItem)
         theMediaPlayer?.play()
+        
+        setPlayingMusicInfo(fileUrl: songURL)
+        
         print("Playing song..")
     }
     
@@ -37,4 +40,22 @@ class Player
             theMediaPlayer.pause()
         }
     }
+    
+    
+    func setPlayingMusicInfo(fileUrl: String){
+        
+        let urlArray = fileUrl.split{$0 == "/"}.map(String.init)
+        
+        let name = urlArray[urlArray.endIndex-1]
+        
+        print(name)
+        
+        let songInfo = [
+            MPMediaItemPropertyTitle: name,
+            MPMediaItemPropertyArtist: "Superfy"
+        ]
+        
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = songInfo
+    }
+    
 }
