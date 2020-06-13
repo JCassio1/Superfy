@@ -30,6 +30,12 @@ class ViewController: UIViewController {
         UIApplication.shared.beginReceivingRemoteControlEvents()
         becomeFirstResponder()
         
+        let notificationCenterAlerts = NotificationCenter.default
+        
+        notificationCenterAlerts.addObserver(self, selector: #selector(handleInterruption), name: AVAudioSession.interruptionNotification, object: AVAudioSession.sharedInstance())
+        
+        notificationCenterAlerts.addObserver(self, selector: #selector(routeChange), name: AVAudioSession.routeChangeNotification, object: AVAudioSession.sharedInstance())
+        
         configureUI()
 
         //init
@@ -105,15 +111,60 @@ class ViewController: UIViewController {
         }
     }
     
+    // If audio is interrupted by phone call or other app
+    @objc func handleInterruption(notification: NSNotification) {
+        player?.pauseSong()
+        
+        if notification.name != AVAudioSession.interruptionNotification
+            || notification.userInfo == nil{
+            return
+        }
+
+        var info = notification.userInfo!
+        var intValue: UInt = 0
+        (info[AVAudioSessionInterruptionTypeKey] as! NSValue).getValue(&intValue)
+        if let interruptionType = AVAudioSession.InterruptionType(rawValue: intValue) {
+
+            switch interruptionType {
+
+            case .began:
+                print("began")
+                // player is paused and session is inactive. need to update UI)
+                player?.pauseSong()
+                print("audio paused")
+
+            default:
+                print("ended")
+                player?.playSong()
+                print("audio resumed")
+            }
+        }
+    }
+    
+    @objc func routeChange(notification: NSNotification) {
+        guard let userInfo = notification.userInfo,
+            let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
+            let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue) else {
+                return
+        }
+
+        // Switch over the route change reason.
+        switch reason {
+
+        case .newDeviceAvailable: // New device found.
+            let session = AVAudioSession.sharedInstance()
+                player?.playSong()
+                changePlayButton(playing: true)
+
+        case .oldDeviceUnavailable: // Old device removed.
+            if let previousRoute =
+                userInfo[AVAudioSessionRouteChangePreviousRouteKey] as? AVAudioSessionRouteDescription {
+                player?.pauseSong()
+                changePlayButton(playing: false)
+            }
+
+        default: ()
+        }
+    }
+    
 }
-
-
-
-
-
-
-
-
-
-
-
