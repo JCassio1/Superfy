@@ -19,8 +19,10 @@ class ViewController: UIViewController {
     
     var player : Player?
     
-    let pauseIcon = UIImage(systemName: "pause.fill")
-    let playIcon = UIImage(systemName: "play.fill")
+    let pauseIconForLight = UIImage(systemName: "pause.fill")
+    let playIconForLight = UIImage(systemName: "play.fill")
+    let pauseIconForDark = UIImage(systemName: "pause.fill")!.withTintColor(.white, renderingMode: .alwaysOriginal)
+    let playIconForDark = UIImage(systemName: "play.fill")!.withTintColor(.white, renderingMode: .alwaysOriginal)
  
 
     override func viewDidLoad() {
@@ -36,6 +38,14 @@ class ViewController: UIViewController {
         
         notificationCenterAlerts.addObserver(self, selector: #selector(routeChange), name: AVAudioSession.routeChangeNotification, object: AVAudioSession.sharedInstance())
         
+        if traitCollection.userInterfaceStyle == .light {
+            print("Light mode")
+            playPauseButon.setImage(playIconForLight, for: .normal)
+        } else {
+            print("Dark mode")
+            playPauseButon.setImage(playIconForDark, for: .normal)
+        }
+        
         configureUI()
 
         //init
@@ -43,8 +53,6 @@ class ViewController: UIViewController {
         let url = "https://www.osiris-shop.com/music_app/Mandume.mp3"
     
         player?.loadSong(songURL: url)
-        
-        if player!.theMediaPlayer.rate > 0 { playPauseButon.setImage(pauseIcon, for: .normal) }
     }
     
     override var canBecomeFirstResponder: Bool {
@@ -92,7 +100,14 @@ class ViewController: UIViewController {
     }
     
     func changePlayButton(playing: Bool) {
-        playing ? playPauseButon.setImage(playIcon, for: .normal) : playPauseButon.setImage(pauseIcon, for: .normal)
+        
+        if traitCollection.userInterfaceStyle == .light {
+            print("Light mode")
+            playing ? playPauseButon.setImage(playIconForLight, for: .normal) : playPauseButon.setImage(pauseIconForLight, for: .normal)
+        } else {
+            print("Dark mode")
+            playing ? playPauseButon.setImage(playIconForDark, for: .normal) : playPauseButon.setImage(pauseIconForDark, for: .normal)
+        }
     }
     
     // If audio is interrupted by phone call or other app
@@ -167,6 +182,19 @@ class ViewController: UIViewController {
                 print("Play... remote")
                 player?.playSong()
             }
+        }
+    }
+    
+    //If changed to dark mode
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        if traitCollection.userInterfaceStyle == .light {
+            print("Light mode")
+            playPauseButon.setImage(playIconForLight, for: .normal)
+        } else {
+            print("Dark mode")
+            playPauseButon.setImage(playIconForDark, for: .normal)
         }
     }
     
