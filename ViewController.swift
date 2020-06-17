@@ -50,9 +50,9 @@ class ViewController: UIViewController {
 
         //init
         player = Player()
-        let url = "https://www.osiris-shop.com/music_app/Mandume.mp3"
-    
-        player?.loadSong(songURL: url)
+//        let url = "https://www.osiris-shop.com/music_app/Mandume.mp3"
+        retrieveSongs()
+//        player?.loadSong(songURL: url)
     }
     
     override var canBecomeFirstResponder: Bool {
@@ -198,4 +198,22 @@ class ViewController: UIViewController {
         }
     }
     
+    func retrieveSongs() {
+        
+        guard let url = URL(string: "https://osiris-shop.com/music_app/get-music.php") else {
+            print("URL is invalid!")
+            return
+        }
+        
+        let request = URLRequest(url: url)
+        
+        let task = URLSession.shared.dataTask(
+            with: request,
+                    completionHandler: { data, response, error in
+                        let retrievedList = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
+                        print(retrievedList)
+                    })
+                task.resume()
+                print("Getting songs")
+}
 }
