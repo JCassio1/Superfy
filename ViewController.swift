@@ -18,6 +18,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var playPauseButon: UIButton!
     
     var player : Player?
+    var songs: [Song] = []
     
     let pauseIconForLight = UIImage(systemName: "pause.fill")
     let playIconForLight = UIImage(systemName: "play.fill")
@@ -211,9 +212,37 @@ class ViewController: UIViewController {
             with: request,
                     completionHandler: { data, response, error in
                         let retrievedList = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)
-                        print(retrievedList)
+                        self.parseSongs(data: retrievedList!)
                     })
-                task.resume()
-                print("Getting songs")
-}
+        task.resume()
+        print("Getting songs")
+    }
+    
+    func parseSongs(data: NSString) {
+        
+//        * separates each song from the function
+        if (data.contains("#")) {
+
+            let dataArray = (data as String).components(separatedBy: "#")
+            
+            for songItem in dataArray {
+                
+                let songsData = songItem.components(separatedBy: ",")
+                
+                let LikesWithoutSpaces = songsData[2].trimmingCharacters(in: .whitespacesAndNewlines) //Data returning with spaces
+                let playsWithoutSpaces = songsData[3].trimmingCharacters(in: .whitespacesAndNewlines) //Data returning with spaces
+                
+                let newSong = Song(id: songsData[0], name: songsData[1], numberOfLikes: LikesWithoutSpaces, numberOfPlays: playsWithoutSpaces)
+
+                songs.append(newSong!)
+            }
+            
+            for allData in songs {
+                print(allData.getId())
+                print(allData.getName())
+                print(String(allData.getNumberOfLikes()))
+                print(String(allData.getNumberOfPlays()))
+            }
+        }
+    }
 }
