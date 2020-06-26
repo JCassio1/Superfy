@@ -16,6 +16,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var coverImage: UIImageView!
     @IBOutlet weak var playPauseButon: UIButton!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var currentSongName: UILabel!
+    
     
     
     var player : Player?
@@ -57,7 +59,7 @@ class ViewController: UIViewController {
         player = Player()
 //        let url = "https://www.osiris-shop.com/music_app/Mandume.mp3"
         retrieveSongs()
-//        player?.loadSong(songURL: url)
+
         
     }
     
@@ -255,7 +257,9 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        changePlayButton(playing: false)
         player?.loadSong(songURL: "https://www.osiris-shop.com/music_app/" + songs[indexPath.row].getName())
+        currentSongName.text = songs[indexPath.row].getCleanSongName()
     
     }
 }
@@ -274,8 +278,8 @@ extension ViewController: UITableViewDataSource {
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "songsTableViewCell", for: indexPath) as? TableViewCell
 
-        cell?.songInformation.text = songs[indexPath.row].getName()
         cell?.songArtwork.image = UIImage(named: "orange")
+        cell?.songInformation.text = songs[indexPath.row].getCleanSongName()
 
         return cell!
     }
