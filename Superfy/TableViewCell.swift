@@ -13,7 +13,8 @@ class TableViewCell: UITableViewCell {
     @IBOutlet weak var songArtwork: UIImageView!
     @IBOutlet weak var songInformation: UILabel!
     
-
+    @IBOutlet weak var currentArtistName: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

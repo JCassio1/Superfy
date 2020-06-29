@@ -17,6 +17,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var playPauseButon: UIButton!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var currentSongName: UILabel!
+
+    
     
     
     
@@ -239,7 +241,9 @@ class ViewController: UIViewController {
                 let LikesWithoutSpaces = songsData[2].trimmingCharacters(in: .whitespacesAndNewlines) //Data returning with spaces
                 let playsWithoutSpaces = songsData[3].trimmingCharacters(in: .whitespacesAndNewlines) //Data returning with spaces
                 
-                let newSong = Song(id: songsData[0], name: songsData[1], numberOfLikes: LikesWithoutSpaces, numberOfPlays: playsWithoutSpaces)
+                let artistWithoutspaces = songsData[4].trimmingCharacters(in: .whitespacesAndNewlines)
+                
+                let newSong = Song(id: songsData[0], name: songsData[1], numberOfLikes: LikesWithoutSpaces, numberOfPlays: playsWithoutSpaces, artist: artistWithoutspaces)
 
                 songs.append(newSong!)
             }
@@ -258,7 +262,7 @@ extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         changePlayButton(playing: false)
-        player?.loadSong(songURL: "https://www.osiris-shop.com/music_app/" + songs[indexPath.row].getName())
+        player?.loadSong(songURL: "https://www.osiris-shop.com/music_app/" + songs[indexPath.row].getArtist() + " - " + songs[indexPath.row].getName())
         currentSongName.text = songs[indexPath.row].getCleanSongName()
     
     }
@@ -280,6 +284,7 @@ extension ViewController: UITableViewDataSource {
 
         cell?.songArtwork.image = UIImage(named: "orange")
         cell?.songInformation.text = songs[indexPath.row].getCleanSongName()
+        cell?.currentArtistName.text = songs[indexPath.row].getArtist()
 
         return cell!
     }
